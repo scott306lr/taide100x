@@ -40,7 +40,7 @@ class SimpleWrapper(nn.Module):
         if top_p is not None and top_p < 1.0:
             warpers.append(TopPLogitsWarper(top_p=top_p))
         
-        return None
+        return warpers
     
     def _get_stopping_criteria(
         self,
@@ -72,9 +72,9 @@ class SimpleWrapper(nn.Module):
         do_sample: bool,
     ):
         if do_sample:
-            next_token_scores = logits_warper(None, logits)
+            next_token_scores = logits_warper(None, logits.squeeze(1))
             probs = nn.functional.softmax(next_token_scores, dim=-1)
-            return torch.multinomial(probs, num_samples=1).squeeze(1)
+            return torch.multinomial(probs, 1)
         else:
             return torch.argmax(logits, dim=-1)
 
