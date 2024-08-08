@@ -1,39 +1,18 @@
 import torch
-from transformers import LlamaForCausalLM, AutoTokenizer
-
-from fastchat.model import get_conversation_template
-from copy import deepcopy
+# from transformers import LlamaForCausalLM, AutoTokenizer
+from transformers import AutoTokenizer, AutoModelForCausalLM
 import argparse
 import time
 
 from models.model import NaiveWrapper
 
-
 def main(args):
-    def warmup(model):
-        conv = get_conversation_template(args.model_type)
-
-        if args.model_type == "llama-2-chat":
-            sys_p = "You are a helpful, respectful and honest assistant. Always answer as helpfully as possible, while being safe.  Your answers should not include any harmful, unethical, racist, sexist, toxic, dangerous, or illegal content. Please ensure that your responses are socially unbiased and positive in nature.\n\nIf a question does not make any sense, or is not factually coherent, explain why instead of answering something not correct. If you don't know the answer to a question, please don't share false information."
-            conv.system_message = sys_p
-        elif args.model_type == "mixtral":
-            conv = get_conversation_template("llama-2-chat")
-            conv.system_message = ''
-            conv.sep2 = "</s>"
-        conv.append_message(conv.roles[0], "Hello")
-        conv.append_message(conv.roles[1], None)
-        prompt = conv.get_prompt()
-        if args.model_type == "llama-2-chat":
-            prompt += " "
-        input_ids = model.tokenizer([prompt]).input_ids
-        input_ids = torch.as_tensor(input_ids).cuda()
-        _ = model.generate(input_ids, temperature=args.temp, max_length=args.max_new_token, do_sample=args.do_sample)
 
     print("Loading model...")
 
     # load LLM
-    llm = LlamaForCausalLM.from_pretrained(
-        args.llm_path, 
+    llm = AutoModelForCausalLM.from_pretrained(
+        args.llm_path,
         torch_dtype=torch.float16,
         low_cpu_mem_usage=True,
         device_map="auto"
@@ -46,36 +25,33 @@ def main(args):
     model.set_tokenizer(tokenizer)
     model.set_llm(llm)
 
-    print("Loaded.")
-
     model.eval()
 
-    # set model to eval mode, and warmup the model
-    print("Warming up...")
-
-    warmup(model)
+    print("Warming up model...")
 
     # input message
-    your_message="What's the best way to start learning a new language?"
-
-    if args.model_type == "llama-2-chat":
-        conv = get_conversation_template("llama-2-chat")  
-        sys_p = "You are a helpful, respectful and honest assistant. Always answer as helpfully as possible, while being safe.  Your answers should not include any harmful, unethical, racist, sexist, toxic, dangerous, or illegal content. Please ensure that your responses are socially unbiased and positive in nature.\n\nIf a question does not make any sense, or is not factually coherent, explain why instead of answering something not correct. If you don't know the answer to a question, please don't share false information."
-        conv.system_message = sys_p
-        conv.append_message(conv.roles[0], your_message)
-        conv.append_message(conv.roles[1], None)
-        prompt = conv.get_prompt() + " "
-    elif args.model_type == "vicuna":
-        conv = get_conversation_template("vicuna")
-        conv.append_message(conv.roles[0], your_message)
-        conv.append_message(conv.roles[1], None)
-        prompt = conv.get_prompt()
-
-    input_ids = model.tokenizer([prompt]).input_ids
-    input_ids = torch.as_tensor(input_ids).cuda()
+    system_prompt = "You are a helpful, respectful and honest assistant. Always answer as helpfully as possible, while being safe.  Your answers should not include any harmful, unethical, racist, sexist, toxic, dangerous, or illegal content. Please ensure that your responses are socially unbiased and positive in nature.\n\nIf a question does not make any sense, or is not factually coherent, explain why instead of answering something not correct. If you don't know the answer to a question, please don't share false information."
+    input_message = "Hello."
+    messages = [
+        {"role": "system", "content": system_prompt},
+        {"role": "user", "content": input_message},
+    ]
+    input_ids = tokenizer.apply_chat_template(messages, tokenize=True, add_generation_prompt=True, return_tensors="pt").cuda()
+    _  = model.generate(input_ids, temperature=args.temp, max_length=args.max_new_token, do_sample=args.do_sample)
 
     # generate response
     print("Generating response...")
+
+    # input message
+    system_prompt = "You are a helpful, respectful and honest assistant. Always answer as helpfully as possible, while being safe.  Your answers should not include any harmful, unethical, racist, sexist, toxic, dangerous, or illegal content. Please ensure that your responses are socially unbiased and positive in nature.\n\nIf a question does not make any sense, or is not factually coherent, explain why instead of answering something not correct. If you don't know the answer to a question, please don't share false information."
+    input_message = "What's the best way to start learning a new language?"
+    messages = [
+        {"role": "system", "content": system_prompt},
+        {"role": "user", "content": input_message},
+    ]
+    input_ids = tokenizer.apply_chat_template(messages, tokenize=True, add_generation_prompt=True, return_tensors="pt").cuda()
+    prompt = tokenizer.decode(input_ids[0])
+    
     start_time = time.time()
     output_ids = model.generate(input_ids, temperature=args.temp, max_length=args.max_new_token, do_sample=args.do_sample)
     end_time = time.time()
@@ -96,7 +72,6 @@ def main(args):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--model-type", type=str, default="llama-2-chat",choices=["llama-2-chat","vicuna","mixtral"], help="llama-2-chat or vicuna, for chat template")
     parser.add_argument(
         "--max-new-token",
         type=int,
@@ -104,15 +79,9 @@ if __name__ == "__main__":
         help="The maximum number of new generated tokens.",
     )
     parser.add_argument(
-        "--do-sample",
-        type=bool,
-        default=False,
-        help="Whether to do sampling. (Default is False)",
-    )
-    parser.add_argument(
         "--temp",
         type=float,
-        default=0.5,
+        default=0.6,
         help="The temperature for sampling.",
     )
     parser.add_argument(
@@ -121,6 +90,11 @@ if __name__ == "__main__":
         type=str,
         default="meta-llama/Llama-2-7b-chat-hf",
         help="LLM model path.",
+    )
+    parser.add_argument(
+        "--do-sample",
+        action="store_true",
+        help="Whether to do sampling. (Default is False)",
     )
     parser.add_argument(
         "-nm",
