@@ -4,7 +4,7 @@ from transformers import AutoTokenizer, AutoModelForCausalLM
 import argparse
 import time
 
-from models.model import NaiveWrapper
+from models import NaiveWrapper, HuggingFaceWrapper
 
 def main(args):
     # deterministic
@@ -25,6 +25,8 @@ def main(args):
 
     if args.mode == "naive":
         model = NaiveWrapper()
+    elif args.mode == "huggingface" or args.mode == "hf":
+        model = HuggingFaceWrapper()
     else:
         raise ValueError("Invalid mode.")
     
