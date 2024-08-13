@@ -1,5 +1,4 @@
 import torch
-import torch.nn as nn
 from .base import WrapperBase
 
 from transformers.generation.logits_process import LogitsWarper

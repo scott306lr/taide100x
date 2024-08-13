@@ -1,10 +1,8 @@
 import torch
 import torch.nn as nn
-from transformers import AutoTokenizer
 from transformers.generation.logits_process import LogitsWarper, LogitsProcessorList, TemperatureLogitsWarper, TopKLogitsWarper, TopPLogitsWarper, LogitNormalization
 from transformers.generation.stopping_criteria import StoppingCriteria, StoppingCriteriaList, MaxLengthCriteria, MaxTimeCriteria, EosTokenCriteria
 
-from transformers.cache_utils import StaticCache, DynamicCache
 
 # https://github.com/huggingface/transformers/blob/main/src/transformers/generation/utils.py
 # Several functions are form class GenerationMixin, simplified.
