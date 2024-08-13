@@ -7,8 +7,13 @@ import time
 from models.model import NaiveWrapper
 
 def main(args):
+    # deterministic
+    torch.manual_seed(0)
 
     print("Loading model...")
+
+    # load tokenizer
+    tokenizer = AutoTokenizer.from_pretrained(args.llm_path, use_fast=False)
 
     # load LLM
     llm = AutoModelForCausalLM.from_pretrained(
@@ -17,14 +22,15 @@ def main(args):
         low_cpu_mem_usage=True,
         device_map="auto"
     )
+
+    if args.mode == "naive":
+        model = NaiveWrapper()
+    else:
+        raise ValueError("Invalid mode.")
     
-    # load tokenizer
-    tokenizer = AutoTokenizer.from_pretrained(args.llm_path, use_fast=False)
-    
-    model = NaiveWrapper()
+    # set model
     model.set_tokenizer(tokenizer)
     model.set_llm(llm)
-
     model.eval()
 
     print("Warming up model...")
@@ -95,6 +101,12 @@ if __name__ == "__main__":
         "--do-sample",
         action="store_true",
         help="Whether to do sampling. (Default is False)",
+    )
+    parser.add_argument(
+        "--mode",
+        type=str,
+        default="naive",
+        help="The mode of model generation.",
     )
     parser.add_argument(
         "-nm",
