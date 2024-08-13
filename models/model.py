@@ -96,9 +96,9 @@ class SimpleWrapper(nn.Module):
     def generate(
         self,
         input_ids: torch.LongTensor,
-        temperature=0.0,
-        top_p=0.0,
-        top_k=0.0,
+        temperature=None,
+        top_p=None,
+        top_k=None,
         max_length=2048,
         do_sample=True,
     ):        
@@ -130,7 +130,7 @@ class HuggingFaceWrapper(SimpleWrapper):
     def generate(
         self, 
         input_ids: torch.LongTensor, 
-        temperature=0, top_p=0, top_k=0, 
+        temperature=None, top_p=None, top_k=None, 
         max_length=2048, do_sample=True, 
         *args, 
         **kwargs
