@@ -1,31 +1,33 @@
 import torch
-# from transformers import LlamaForCausalLM, AutoTokenizer
 from transformers import AutoTokenizer, AutoModelForCausalLM
 import argparse
 import time
+import os
+import logging
 
 from models import NaiveWrapper, HuggingFaceWrapper
 
-def main(args):
-    # deterministic
-    torch.manual_seed(0)
 
-    print("Loading model...")
-
+def load_model(
+    llm_path: str,
+    mode: str,
+    dtype: torch.dtype = torch.float16,
+    device: str = "auto",
+    ):
     # load tokenizer
-    tokenizer = AutoTokenizer.from_pretrained(args.llm_path, use_fast=False)
-
+    tokenizer = AutoTokenizer.from_pretrained(llm_path, use_fast=False)
+    
     # load LLM
     llm = AutoModelForCausalLM.from_pretrained(
-        args.llm_path,
-        torch_dtype=torch.float16,
+        args.llm_path, 
+        torch_dtype=dtype,
         low_cpu_mem_usage=True,
-        device_map="auto"
+        device_map=device
     )
 
-    if args.mode == "naive":
+    if mode == "naive":
         model = NaiveWrapper()
-    elif args.mode == "huggingface" or args.mode == "hf":
+    elif mode == "huggingface" or mode == "hf":
         model = HuggingFaceWrapper()
     else:
         raise ValueError("Invalid mode.")
@@ -34,18 +36,36 @@ def main(args):
     model.set_tokenizer(tokenizer)
     model.set_llm(llm)
     model.eval()
+    
+    return model, tokenizer
 
-    print("Warming up model...")
 
-    # input message
-    system_prompt = "You are a helpful, respectful and honest assistant. Always answer as helpfully as possible, while being safe.  Your answers should not include any harmful, unethical, racist, sexist, toxic, dangerous, or illegal content. Please ensure that your responses are socially unbiased and positive in nature.\n\nIf a question does not make any sense, or is not factually coherent, explain why instead of answering something not correct. If you don't know the answer to a question, please don't share false information."
-    input_message = "Hello."
-    messages = [
-        {"role": "system", "content": system_prompt},
-        {"role": "user", "content": input_message},
-    ]
-    input_ids = tokenizer.apply_chat_template(messages, tokenize=True, add_generation_prompt=True, return_tensors="pt").cuda()
-    _  = model.generate(input_ids, temperature=args.temp, max_length=args.max_new_token, do_sample=args.do_sample)
+def main(args):
+
+     # set logging level by environment variable
+    LOGLEVEL = os.environ.get("LOGLEVEL", "INFO").upper()
+    logging.basicConfig(level=LOGLEVEL)
+    
+    # deterministic
+    torch.manual_seed(0)
+
+    # load model
+    print("Loading model...")
+    model, tokenizer = load_model(args.llm_path, args.mode)
+
+    # warm up
+    if not args.no_warm_up:
+        print("Warming up model...")
+
+        # input message
+        system_prompt = "You are a helpful, respectful and honest assistant. Always answer as helpfully as possible, while being safe.  Your answers should not include any harmful, unethical, racist, sexist, toxic, dangerous, or illegal content. Please ensure that your responses are socially unbiased and positive in nature.\n\nIf a question does not make any sense, or is not factually coherent, explain why instead of answering something not correct. If you don't know the answer to a question, please don't share false information."
+        input_message = "Hello."
+        messages = [
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": input_message},
+        ]
+        input_ids = tokenizer.apply_chat_template(messages, tokenize=True, add_generation_prompt=True, return_tensors="pt").cuda()
+        _  = model.generate(input_ids, temperature=args.temp, max_new_tokens=args.max_new_tokens, max_length=args.max_length, do_sample=args.do_sample)
 
     # generate response
     print("Generating response...")
@@ -61,7 +81,7 @@ def main(args):
     prompt = tokenizer.decode(input_ids[0])
     
     start_time = time.time()
-    output_ids = model.generate(input_ids, temperature=args.temp, max_length=args.max_new_token, do_sample=args.do_sample)
+    output_ids = model.generate(input_ids, temperature=args.temp, max_new_tokens=args.max_new_tokens, max_length=args.max_length, do_sample=args.do_sample)
     end_time = time.time()
     
     output = model.tokenizer.decode(output_ids[0][input_ids.shape[1]:])
@@ -81,9 +101,15 @@ def main(args):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "--max-new-token",
+        "--max-new-tokens",
         type=int,
         default=1024,
+        help="The maximum number of new generated tokens.",
+    )
+    parser.add_argument(
+        "--max-length",
+        type=int,
+        default=None,
         help="The maximum number of new generated tokens.",
     )
     parser.add_argument(
@@ -109,6 +135,12 @@ if __name__ == "__main__":
         type=str,
         default="naive",
         help="The mode of model generation.",
+    )
+    parser.add_argument(
+        "-nw",
+        "--no-warm-up",
+        action="store_true",
+        help="Warm up the model.",
     )
     parser.add_argument(
         "-nm",
