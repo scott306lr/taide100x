@@ -160,6 +160,8 @@ cython_debug/
 #.idea/
 
 # don't check-in sub folder
+logs/*
+!logs/.gitkeep
 models/*
 !models/.gitkeep
 
