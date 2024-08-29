@@ -1,0 +1,6 @@
+"dataset_name": "tmmluplus-culinary_skills"
+"group":
+- "tc-eval-v2"
+- "tmmluplus_generative_fewshot"
+"include": "_default_template_yaml"
+"task": "tmmluplus_generative_fewshot-culinary_skills"

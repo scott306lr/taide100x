@@ -1,0 +1,8 @@
+"dataset_name": "tmmluplus-education"
+"group":
+- "tc-eval-v2"
+- "tc-eval-v2_fewshot"
+- "tmmluplus_generative_fewshot"
+- "tmmluplus_generative_fewshot-social_sciences"
+"include": "_default_template_yaml"
+"task": "tmmluplus_generative_fewshot-education"

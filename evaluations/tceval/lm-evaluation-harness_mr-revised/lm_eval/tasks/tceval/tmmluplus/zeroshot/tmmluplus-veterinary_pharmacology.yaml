@@ -1,0 +1,8 @@
+"dataset_name": "tmmluplus-veterinary_pharmacology"
+"group":
+- "tc-eval-v2"
+- "tc-eval-v2_zeroshot"
+- "tmmluplus_zeroshot"
+- "tmmluplus_zeroshot-other"
+"include": "_default_template_yaml"
+"task": "tmmluplus_zeroshot-veterinary_pharmacology"

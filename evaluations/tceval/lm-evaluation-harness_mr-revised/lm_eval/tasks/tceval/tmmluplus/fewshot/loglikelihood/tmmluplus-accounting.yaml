@@ -1,0 +1,8 @@
+"dataset_name": "tmmluplus-accounting"
+"group":
+- "tc-eval-v2"
+- "tc-eval-v2_fewshot"
+- "tmmluplus_fewshot"
+- "tmmluplus_fewshot-other"
+"include": "_default_template_yaml"
+"task": "tmmluplus_fewshot-accounting"

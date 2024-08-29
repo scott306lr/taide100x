@@ -1,0 +1,6 @@
+"dataset_name": "tmmluplus-three_principles_of_people"
+"group":
+- "tc-eval-v2"
+- "tmmluplus_zeroshot"
+"include": "_default_template_yaml"
+"task": "tmmluplus_zeroshot-three_principles_of_people"

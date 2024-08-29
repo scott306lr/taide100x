@@ -1,0 +1,8 @@
+"dataset_name": "tmmluplus-advance_chemistry"
+"group":
+- "tc-eval-v2"
+- "tc-eval-v2_zeroshot"
+- "tmmluplus_zeroshot"
+- "tmmluplus_zeroshot-STEM"
+"include": "_default_template_yaml"
+"task": "tmmluplus_zeroshot-advance_chemistry"

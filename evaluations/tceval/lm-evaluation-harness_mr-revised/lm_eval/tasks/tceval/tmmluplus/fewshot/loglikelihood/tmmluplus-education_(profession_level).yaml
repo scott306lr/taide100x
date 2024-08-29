@@ -1,0 +1,8 @@
+"dataset_name": "tmmluplus-education_(profession_level)"
+"group":
+- "tc-eval-v2"
+- "tc-eval-v2_fewshot"
+- "tmmluplus_fewshot"
+- "tmmluplus_fewshot-social_sciences"
+"include": "_default_template_yaml"
+"task": "tmmluplus_fewshot-education_(profession_level)"

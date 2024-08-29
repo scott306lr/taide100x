@@ -1,0 +1,6 @@
+"dataset_name": "tmmluplus-occupational_therapy_for_psychological_disorders"
+"group":
+- "tc-eval-v2"
+- "tmmluplus_generative_fewshot"
+"include": "_default_template_yaml"
+"task": "tmmluplus_generative_fewshot-occupational_therapy_for_psychological_disorders"

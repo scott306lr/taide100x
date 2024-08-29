@@ -1,0 +1,6 @@
+"dataset_name": "tmmluplus-politic_science"
+"group":
+- "tc-eval-v2"
+- "tmmluplus_zeroshot"
+"include": "_default_template_yaml"
+"task": "tmmluplus_zeroshot-politic_science"

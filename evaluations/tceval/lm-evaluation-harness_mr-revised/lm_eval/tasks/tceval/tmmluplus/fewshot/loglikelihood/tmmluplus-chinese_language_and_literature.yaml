@@ -1,0 +1,8 @@
+"dataset_name": "tmmluplus-chinese_language_and_literature"
+"group":
+- "tc-eval-v2"
+- "tc-eval-v2_fewshot"
+- "tmmluplus_fewshot"
+- "tmmluplus_fewshot-social_sciences"
+"include": "_default_template_yaml"
+"task": "tmmluplus_fewshot-chinese_language_and_literature"

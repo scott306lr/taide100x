@@ -1,0 +1,6 @@
+"dataset_name": "tmmluplus-insurance_studies"
+"group":
+- "tc-eval-v2"
+- "tmmluplus_zeroshot"
+"include": "_default_template_yaml"
+"task": "tmmluplus_zeroshot-insurance_studies"

@@ -1,0 +1,42 @@
+dataset_path: MediaTek-Research/TCEval-v2
+test_split: test
+fewshot_split: dev
+fewshot_config:
+  sampler: first_n
+
+output_type: generate_until
+doc_to_text: "{{question.strip()}}\nA. {{A}}\nB. {{B}}\nC. {{C}}\nD. {{D}}\nAnswer:"
+doc_to_target: "answer"
+# doc_to_choice: ["A", "B", "C", "D"]
+# doc_to_target: answer
+
+# doc_to_target: "{{{'A': '[[A]]', 'B': '[[B]]', 'C': '[[C]]', 'D': '[[D]]', 'E': '[[E]]'}[answer]}}"
+
+# doc_to_choice: "{'A': 'A', 'B': 'B', 'C': 'C', 'D': 'D', 'E': 'E'}"
+# doc_to_target: answer
+
+# doc_to_text: "{{question.strip()}}\nA. {{choices[0]}}\nB. {{choices[1]}}\nC. {{choices[2]}}\nD. {{choices[3]}}\nAnswer:"
+# doc_to_target: "{{['A', 'B', 'C', 'D'][answer]}}"
+
+
+filter_list:
+  - name: "get-answer"
+    filter:
+      - function: "regex_findall"
+        # regex_pattern: "((?<=The answer is )(.*)(?=.)|(?<=the answer is )(.*)(?=.)|(?<=The answer: )(.*)(?=.)|(?<=The final answer: )(.*)(?=.))"
+        regex_pattern: "^\\s*\\[\\[([A-Ea-e])\\]\\]|^\\s*\\b([A-Ea-e])\\.\\s"
+      - function: "take_first"
+generation_kwargs:
+  until:
+    - "</s>"
+  do_sample: false
+  temperature: 0.0
+metric_list:
+  - metric: exact_match
+    aggregation: mean
+    higher_is_better: true
+    ignore_case: true
+    ignore_punctuation: true
+metadata:
+  version: 0.0
+

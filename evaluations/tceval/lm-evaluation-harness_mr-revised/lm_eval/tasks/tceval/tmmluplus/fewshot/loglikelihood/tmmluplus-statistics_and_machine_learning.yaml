@@ -1,0 +1,6 @@
+"dataset_name": "tmmluplus-statistics_and_machine_learning"
+"group":
+- "tc-eval-v2"
+- "tmmluplus_fewshot"
+"include": "_default_template_yaml"
+"task": "tmmluplus_fewshot-statistics_and_machine_learning"

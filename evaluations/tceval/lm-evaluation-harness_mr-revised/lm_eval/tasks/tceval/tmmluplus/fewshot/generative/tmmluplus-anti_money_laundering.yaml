@@ -1,0 +1,8 @@
+"dataset_name": "tmmluplus-anti_money_laundering"
+"group":
+- "tc-eval-v2"
+- "tc-eval-v2_fewshot"
+- "tmmluplus_generative_fewshot"
+- "tmmluplus_generative_fewshot-humanities"
+"include": "_default_template_yaml"
+"task": "tmmluplus_generative_fewshot-anti_money_laundering"

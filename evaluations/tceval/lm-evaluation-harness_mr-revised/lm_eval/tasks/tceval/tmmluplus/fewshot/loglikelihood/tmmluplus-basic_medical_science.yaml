@@ -1,0 +1,8 @@
+"dataset_name": "tmmluplus-basic_medical_science"
+"group":
+- "tc-eval-v2"
+- "tc-eval-v2_fewshot"
+- "tmmluplus_fewshot"
+- "tmmluplus_fewshot-STEM"
+"include": "_default_template_yaml"
+"task": "tmmluplus_fewshot-basic_medical_science"

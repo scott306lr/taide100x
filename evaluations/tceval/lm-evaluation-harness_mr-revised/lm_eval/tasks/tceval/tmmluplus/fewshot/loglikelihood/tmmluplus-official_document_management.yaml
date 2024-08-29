@@ -1,0 +1,6 @@
+"dataset_name": "tmmluplus-official_document_management"
+"group":
+- "tc-eval-v2"
+- "tmmluplus_fewshot"
+"include": "_default_template_yaml"
+"task": "tmmluplus_fewshot-official_document_management"

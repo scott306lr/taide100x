@@ -1,0 +1,8 @@
+"dataset_name": "tmmluplus-computer_science"
+"group":
+- "tc-eval-v2"
+- "tc-eval-v2_zeroshot"
+- "tmmluplus_zeroshot"
+- "tmmluplus_zeroshot-STEM"
+"include": "_default_template_yaml"
+"task": "tmmluplus_zeroshot-computer_science"

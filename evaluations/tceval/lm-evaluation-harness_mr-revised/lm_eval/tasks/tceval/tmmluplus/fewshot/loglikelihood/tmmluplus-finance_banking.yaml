@@ -1,0 +1,8 @@
+"dataset_name": "tmmluplus-finance_banking"
+"group":
+- "tc-eval-v2"
+- "tc-eval-v2_fewshot"
+- "tmmluplus_fewshot"
+- "tmmluplus_fewshot-other"
+"include": "_default_template_yaml"
+"task": "tmmluplus_fewshot-finance_banking"

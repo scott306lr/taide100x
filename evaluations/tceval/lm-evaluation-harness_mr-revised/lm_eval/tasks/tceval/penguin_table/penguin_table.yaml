@@ -1,0 +1,17 @@
+dataset_path: MediaTek-Research/TCEval-v2
+dataset_name: penguin_table
+task: penguin_table
+test_split: test
+fewshot_split: dev
+fewshot_config:
+  sampler: first_n
+output_type: multiple_choice
+doc_to_text: "{{question.strip()}}\nA. {{A}}\nB. {{B}}\nC. {{C}}\nD. {{D}}\nE. {{E}}\nAnswer:"
+doc_to_choice: ["A", "B", "C", "D", "E"]
+doc_to_target: answer
+metric_list:
+  - metric: acc
+    aggregation: mean
+    higher_is_better: true
+metadata:
+  version: 0.0

@@ -1,0 +1,6 @@
+"dataset_name": "tmmluplus-ttqav2"
+"group":
+- "tc-eval-v2"
+- "tmmluplus_zeroshot"
+"include": "_default_template_yaml"
+"task": "tmmluplus_zeroshot-ttqav2"

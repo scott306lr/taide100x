@@ -1,0 +1,6 @@
+group: mmlu_generative
+task:
+  - mmlu_generative_stem
+  - mmlu_generative_other
+  - mmlu_generative_social_sciences
+  - mmlu_generative_humanities

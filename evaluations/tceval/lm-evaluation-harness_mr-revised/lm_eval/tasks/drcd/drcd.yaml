@@ -1,0 +1,27 @@
+group:
+  - tc-eval-v2
+task: drcd
+dataset_path: MediaTek-Research/TCEval-v2
+dataset_name: drcd
+output_type: generate_until
+test_split: test
+fewshot_split: dev
+fewshot_config:
+  sampler: first_n
+num_fewshot: 3
+description: "Please answer the questions based on the content delimited by triple quotes, and the answers should be as concise as possible. Note: The answers must be substrings of the content.\n\n"
+doc_to_text: "\"\"\"\n{{paragraph}}\n\"\"\"\nQuestion: {{question}}\nAnswer:"
+doc_to_target: references
+generation_kwargs:
+  until:
+    - "\n"
+  do_sample: false
+  temperature: 0.0
+metric_list:
+  - metric: exact_match
+    aggregation: mean
+    higher_is_better: true
+    ignore_case: false
+    ignore_punctuation: false
+metadata:
+  version: 1.0

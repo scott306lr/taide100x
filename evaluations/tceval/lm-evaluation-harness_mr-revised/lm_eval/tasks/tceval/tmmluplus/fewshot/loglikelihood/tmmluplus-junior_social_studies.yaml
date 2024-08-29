@@ -1,0 +1,6 @@
+"dataset_name": "tmmluplus-junior_social_studies"
+"group":
+- "tc-eval-v2"
+- "tmmluplus_fewshot"
+"include": "_default_template_yaml"
+"task": "tmmluplus_fewshot-junior_social_studies"

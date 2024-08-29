@@ -1,0 +1,8 @@
+"dataset_name": "tmmluplus-organic_chemistry"
+"group":
+- "tc-eval-v2"
+- "tc-eval-v2_fewshot"
+- "tmmluplus_generative_fewshot"
+- "tmmluplus_generative_fewshot-STEM"
+"include": "_default_template_yaml"
+"task": "tmmluplus_generative_fewshot-organic_chemistry"
