@@ -19,8 +19,7 @@ from fastchat.model import get_conversation_template # load_model,
 from fastchat.utils import str_to_torch_dtype
 
 from transformers import AutoTokenizer, AutoModelForCausalLM
-from ...models import HuggingFaceWrapper, NaiveWrapper, SDWrapper, ProfileSDWrapper
-from ...models import DraftModel
+from .....models import HuggingFaceWrapper, NaiveWrapper
 
 
 def load_model(

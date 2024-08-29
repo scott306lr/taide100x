@@ -1,3 +1,9 @@
+
+- Currently only the following script is checked:
+```
+python gen_naive_answer.py --model-path [MODEL-PATH] --model-id [MODEL-ID]
+```
+
 # MT Bench TW
 
 We made minor changes to the original [MT Bench](https://github.com/lm-sys/FastChat/tree/main/fastchat/llm_judge) to build MT-Bench-TW
