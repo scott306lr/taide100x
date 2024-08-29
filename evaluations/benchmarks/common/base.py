@@ -45,6 +45,8 @@ class BaseBenchmarkClass(ABC):
 
         if "llama" in model_name:
             self.model_type = "llama"
+        elif "taide" in model_name:
+            self.model_type = "llama"
         elif "mistral" in model_name:
             self.model_type = "mistral"
 
@@ -71,7 +73,7 @@ class BaseBenchmarkClass(ABC):
         )
 
         # Fetch the questions for quality checks
-        self._questions_json_path = os.path.join(self.root_folder, "questions.json")
+        self._questions_json_path = os.path.join(self.root_folder, "questions_zh.json")
         self.answers_json_path = os.path.join(self.log_folder, "quality_check.json")
         self.questions = json.load(open(self._questions_json_path, "r"))
 
@@ -132,7 +134,8 @@ class BaseBenchmarkClass(ABC):
         self, prompt: str, for_benchmarks: bool = True
     ):
         if not for_benchmarks:
-            system_content = "You answers should always be to the point, precise and not more than 2 sentences strictly"
+            # system_content = "You answers should always be to the point, precise and not more than 2 sentences strictly"
+            system_content = "你是一個只會說台灣繁體中文的AI助理。"
             if self.model_type == "mistral":
                 template = [
                     {"role": "user", "content": system_content},
@@ -209,7 +212,7 @@ class BaseBenchmarkClass(ABC):
             prompt = question["prompt"]
             max_tokens = question["max_tokens"]
             temperature = question["temperature"]
-            expected = question["expected"][self.model_type]
+            # expected = question["expected"][self.model_type]
 
             inputs = self.preprocess(prompt=prompt, for_benchmarks=False)
             output_dict = self.run_model(
@@ -223,7 +226,7 @@ class BaseBenchmarkClass(ABC):
                     "max_token": max_tokens,
                     "temperature": temperature,
                     "actual": output,
-                    "expected": expected,
+                    # "expected": expected,
                 }
             )
         self.on_exit()

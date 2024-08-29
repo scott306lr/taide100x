@@ -31,7 +31,8 @@ class PyTorchBenchmark(BaseBenchmarkClass):
 
     @torch.inference_mode()
     def load_model_and_tokenizer(self):
-        self.tokenizer = AutoTokenizer.from_pretrained(self.model_path)
+        
+        self.tokenizer = AutoTokenizer.from_pretrained(self.model_name)
         precision_dtype_mapping = {"float16": torch.float16, "float32": torch.float32}
 
         if self.precision in ["float16", "float32"]:
@@ -41,7 +42,7 @@ class PyTorchBenchmark(BaseBenchmarkClass):
                 "torch_dtype": precision_dtype_mapping[self.precision],
             }
             self.model = AutoModelForCausalLM.from_pretrained(
-                self.model_path, **model_args
+                self.model_name, **model_args
             )
         elif self.precision in ["int4", "int8"] and self.device in ["cuda:0", "cuda"]:
             from transformers import BitsAndBytesConfig
