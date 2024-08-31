@@ -1,7 +1,10 @@
 
 - Currently only the following script is checked:
 ```
-python gen_naive_answer.py --model-path [MODEL-PATH] --model-id [MODEL-ID]
+python gen_naive_answer.py --llm-path [MODEL-PATH] --model-id [MODEL-ID]
+
+# example
+# CUDA_VISIBLE_DEVICES=0 python gen_naive_answer.py --llm-path taide/TAIDE-LX-7B-Chat --model-id taide-lx-7b-chat
 ```
 
 # MT Bench TW
