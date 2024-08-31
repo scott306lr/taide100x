@@ -160,3 +160,6 @@ cython_debug/
 #.idea/
 
 outputs/
+
+# don't log model_answer/ folder generated from mt-bench
+model_answer/

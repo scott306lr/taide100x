@@ -1,7 +1,7 @@
 """Generate answers with local models.
 
 Usage:
-python3 gen_model_answer.py --model-path lmsys/fastchat-t5-3b-v1.0 --model-id fastchat-t5-3b-v1.0
+CUDA_VISIBLE_DEVICES=0 python  gen_naive_answer.py --llm-path taide/TAIDE-LX-7B-Chat --model-id taide-lx-7b-chat
 """
 import argparse
 from copy import deepcopy
@@ -19,15 +19,17 @@ from fastchat.model import get_conversation_template # load_model,
 from fastchat.utils import str_to_torch_dtype
 
 from transformers import AutoTokenizer, AutoModelForCausalLM
-from .....models import HuggingFaceWrapper, NaiveWrapper
+
+# add the parent directory to the models, three levels above
+import os, sys
+root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../../.."))
+print(f"Root dir: {root_dir}")
+sys.path.append(root_dir)
+from models import NaiveWrapper, HuggingFaceWrapper
 
 
 def load_model(
     llm_path: str,
-    ssm_path: str,
-    mode: str,
-    sd_method: str,
-    out_dir: str = None,
     dtype: torch.dtype = torch.float16,
     device: str = "auto",
     ):
@@ -53,10 +55,6 @@ def load_model(
 
 def run_eval(
     llm_path,
-    ssm_path,
-    mode,
-    sd_method,
-    out_dir,
     model_id,
     question_file,
     question_begin,
@@ -91,10 +89,6 @@ def run_eval(
         ans_handles.append(
             get_answers_func(
                 llm_path,
-                ssm_path,
-                mode,
-                sd_method,
-                out_dir,
                 model_id,
                 questions[i : i + chunk_size],
                 answer_file,
@@ -114,10 +108,6 @@ def run_eval(
 @torch.inference_mode()
 def get_model_answers(
     llm_path,
-    ssm_path,
-    mode,
-    sd_method,
-    out_dir,
     model_id,
     questions,
     answer_file,
@@ -139,7 +129,7 @@ def get_model_answers(
     #     cpu_offloading=False,
     #     debug=False,
     # )
-    model, tokenizer = load_model(llm_path, ssm_path, mode, sd_method, out_dir, dtype=dtype, device="cuda")
+    model, tokenizer = load_model(llm_path, dtype=dtype, device="cuda")
 
     for question in tqdm(questions):
         if question["category"] in temperature_config:
@@ -259,31 +249,6 @@ if __name__ == "__main__":
         required=True,
         help="The path to the weights. This can be a local folder or a Hugging Face repo ID.",
     )
-    parser.add_argument(
-        "--ssm-path",
-        "-ssm",
-        type=str,
-        required=True,
-        help="The path to the weights. This can be a local folder or a Hugging Face repo ID.",
-    )
-    parser.add_argument(
-        "--mode",
-        type=str,
-        default="naive",
-        help="The mode of model generation.",
-    )
-    parser.add_argument(
-        "--sd-method",
-        type=str,
-        default="naive",
-        help="The mode of model generation.",
-    )
-    parser.add_argument(
-        "--out-dir",
-        type=str,
-        default="specdecodes/experiments/mt_bench/",
-        help="The output directory for sd profiling.",
-    )
     
     parser.add_argument(
         "--model-id", type=str, required=True, help="A custom name for the model."
@@ -291,7 +256,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--bench-name",
         type=str,
-        default="mt_bench",
+        default="mt_bench_tw",
         help="The name of the benchmark question set.",
     )
     parser.add_argument(
@@ -362,13 +327,8 @@ if __name__ == "__main__":
     print(f"Output to {answer_file}")
 
     
-    # out_dir = f"specdecodes/experiments/mt_bench-{args.sd_method}-{unique_id:04d}"
     run_eval(
         llm_path=args.llm_path,
-        ssm_path=args.ssm_path,
-        mode=args.mode,
-        sd_method=args.sd_method,
-        out_dir=args.out_dir,
         
         model_id=args.model_id,
         question_file=question_file,
