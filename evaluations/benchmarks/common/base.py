@@ -42,10 +42,13 @@ class BaseBenchmarkClass(ABC):
         assert device in ["cuda", "cpu", "metal", "cuda:0"], ValueError(
             "Device other than 'cuda'/'cuda:0', 'cpu' and 'metal' are not supported"
         )
-
-        if "llama" in model_name:
-            self.model_type = "llama"
-        elif "taide" in model_name:
+        if "TAIDE" in model_name:
+            self.model_type = "taide"
+        elif "Taiwan" in model_name:
+            self.model_type =  "taiwan-llm"
+        elif "Breeze" in model_name:
+            self.model_type = "breeze"
+        elif "llama" in model_name:
             self.model_type = "llama"
         elif "mistral" in model_name:
             self.model_type = "mistral"
@@ -73,7 +76,7 @@ class BaseBenchmarkClass(ABC):
         )
 
         # Fetch the questions for quality checks
-        self._questions_json_path = os.path.join(self.root_folder, "questions_zh.json")
+        self._questions_json_path = os.path.join(self.root_folder, "questions_tw.json")
         self.answers_json_path = os.path.join(self.log_folder, "quality_check.json")
         self.questions = json.load(open(self._questions_json_path, "r"))
 
@@ -212,7 +215,7 @@ class BaseBenchmarkClass(ABC):
             prompt = question["prompt"]
             max_tokens = question["max_tokens"]
             temperature = question["temperature"]
-            # expected = question["expected"][self.model_type]
+            expected = question["expected"][self.model_type]
 
             inputs = self.preprocess(prompt=prompt, for_benchmarks=False)
             output_dict = self.run_model(
@@ -226,7 +229,7 @@ class BaseBenchmarkClass(ABC):
                     "max_token": max_tokens,
                     "temperature": temperature,
                     "actual": output,
-                    # "expected": expected,
+                    "expected": expected,
                 }
             )
         self.on_exit()

@@ -5,10 +5,11 @@ import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
 sys.path.append(os.getcwd())
+# from modeling_flash_llama import LlamaForCausalLM
+# from ....models.llm.modeling_flash_llama import LlamaForCausalLM
 
 from common.base import BaseBenchmarkClass  # noqa
 from common.utils import launch_cli, make_report  # noqa
-
 
 class PyTorchBenchmark(BaseBenchmarkClass):
     def __init__(
@@ -32,7 +33,7 @@ class PyTorchBenchmark(BaseBenchmarkClass):
     @torch.inference_mode()
     def load_model_and_tokenizer(self):
         
-        self.tokenizer = AutoTokenizer.from_pretrained(self.model_name)
+        self.tokenizer = AutoTokenizer.from_pretrained(self.model_path)
         precision_dtype_mapping = {"float16": torch.float16, "float32": torch.float32}
 
         if self.precision in ["float16", "float32"]:
@@ -42,7 +43,7 @@ class PyTorchBenchmark(BaseBenchmarkClass):
                 "torch_dtype": precision_dtype_mapping[self.precision],
             }
             self.model = AutoModelForCausalLM.from_pretrained(
-                self.model_name, **model_args
+                self.model_path, **model_args
             )
         elif self.precision in ["int4", "int8"] and self.device in ["cuda:0", "cuda"]:
             from transformers import BitsAndBytesConfig
@@ -111,7 +112,9 @@ class PyTorchBenchmark(BaseBenchmarkClass):
 
     def postprocess(self, output: dict) -> str:
         output_tokens = output["output_tokens"]
-        return self.tokenizer.decode(output_tokens, skip_special_tokens=True)
+        result = self.tokenizer.decode(output_tokens, skip_special_tokens=True)
+        # print(result)
+        return result
 
     def on_exit(self):
         if self.device == "cuda:0":
@@ -129,7 +132,8 @@ if __name__ == "__main__":
     model_path = args.model_name
     precisions_mapping = {
         "cpu": ("float32",),
-        "cuda": ("float32", "float16", "int8", "int4"),
+        # "cuda": ("float32", "float16", "int8", "int4"),
+        "cuda": ("float32", "float16"),
         "metal": ("float32", "float16"),
     }
     runner_dict = {}
