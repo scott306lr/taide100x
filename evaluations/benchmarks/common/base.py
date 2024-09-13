@@ -42,15 +42,17 @@ class BaseBenchmarkClass(ABC):
         assert device in ["cuda", "cpu", "metal", "cuda:0"], ValueError(
             "Device other than 'cuda'/'cuda:0', 'cpu' and 'metal' are not supported"
         )
-        if "TAIDE" in model_name:
+        lower_model_name = model_name.lower()
+        
+        if "taide" in lower_model_name:
             self.model_type = "taide"
-        elif "Taiwan" in model_name:
+        elif "taiwan" in lower_model_name:
             self.model_type =  "taiwan-llm"
-        elif "Breeze" in model_name:
+        elif "breeze" in lower_model_name:
             self.model_type = "breeze"
-        elif "llama" in model_name:
+        elif "llama" in lower_model_name:
             self.model_type = "llama"
-        elif "mistral" in model_name:
+        elif "mistral" in lower_model_name:
             self.model_type = "mistral"
 
         self.model_name = model_name
