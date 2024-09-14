@@ -1,0 +1,29 @@
+[
+    {
+        "prompt": "以下提供英文內容，請幫我翻譯成中文。Dongshan coffee is famous for its unique position, and the constant refinement of production methods. The flavor is admired by many caffeine afficionados.",
+        "max_tokens": 120,
+        "temperature": 0.1,
+        "expected": {
+            "llama": " The main reason your pancakes are terrible is because you did not mix the batter long enough, resulting in a dense and flat pancake.",
+            "mistral": "he main reason for the terrible pancakes could be that the batter was too thick, which resulted in a dry and tough texture."
+        }
+    },
+    {
+        "prompt": "請以品牌經理的身份，給廣告公司的創意總監寫一封信，提出對於新產品廣告宣傳活動的創意建議。",
+        "max_tokens": 120,
+        "temperature": 0.1,
+        "expected": {
+            "llama": " After the hunter shoots and kills one bird, 41 birds remain on the branch.",
+            "mistral": "One bird is left on the branch."
+        }
+    },
+    {
+        "prompt": "請以以下內容為基礎，寫一篇文章：撰寫一篇作文，題目為《一張舊照片》，內容要求為：選擇一張令你印象深刻的照片，說明令你印象深刻的原因，並描述照片中的影像及背後的故事。記錄成長的過程、與他人的情景、環境變遷和美麗的景色。",
+        "max_tokens": 120,
+        "temperature": 0.1,
+        "expected": {
+            "llama": " There are 2 mistakes in the sentence: \"to loose\" should be \"to lose\" and \"hundred's\" should be \"hundreds\".",
+            "mistral": "There are two mistakes in the sentence: \"Its\" should be \"It's\" and \"to much\" should be \"too much\"."
+        }
+    }
+]

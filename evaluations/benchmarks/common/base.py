@@ -42,10 +42,17 @@ class BaseBenchmarkClass(ABC):
         assert device in ["cuda", "cpu", "metal", "cuda:0"], ValueError(
             "Device other than 'cuda'/'cuda:0', 'cpu' and 'metal' are not supported"
         )
-
-        if "llama" in model_name:
+        lower_model_name = model_name.lower()
+        
+        if "taide" in lower_model_name:
+            self.model_type = "taide"
+        elif "taiwan" in lower_model_name:
+            self.model_type =  "taiwan-llm"
+        elif "breeze" in lower_model_name:
+            self.model_type = "breeze"
+        elif "llama" in lower_model_name:
             self.model_type = "llama"
-        elif "mistral" in model_name:
+        elif "mistral" in lower_model_name:
             self.model_type = "mistral"
 
         self.model_name = model_name
@@ -71,7 +78,7 @@ class BaseBenchmarkClass(ABC):
         )
 
         # Fetch the questions for quality checks
-        self._questions_json_path = os.path.join(self.root_folder, "questions.json")
+        self._questions_json_path = os.path.join(self.root_folder, "questions_tw.json")
         self.answers_json_path = os.path.join(self.log_folder, "quality_check.json")
         self.questions = json.load(open(self._questions_json_path, "r"))
 
@@ -132,7 +139,8 @@ class BaseBenchmarkClass(ABC):
         self, prompt: str, for_benchmarks: bool = True
     ):
         if not for_benchmarks:
-            system_content = "You answers should always be to the point, precise and not more than 2 sentences strictly"
+            # system_content = "You answers should always be to the point, precise and not more than 2 sentences strictly"
+            system_content = "你是一個只會說台灣繁體中文的AI助理。"
             if self.model_type == "mistral":
                 template = [
                     {"role": "user", "content": system_content},
