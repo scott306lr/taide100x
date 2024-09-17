@@ -5,10 +5,11 @@ import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
 sys.path.append(os.getcwd())
+# from modeling_flash_llama import LlamaForCausalLM
+# from ....models.llm.modeling_flash_llama import LlamaForCausalLM
 
 from common.base import BaseBenchmarkClass  # noqa
 from common.utils import launch_cli, make_report  # noqa
-
 
 class PyTorchBenchmark(BaseBenchmarkClass):
     def __init__(
@@ -31,6 +32,7 @@ class PyTorchBenchmark(BaseBenchmarkClass):
 
     @torch.inference_mode()
     def load_model_and_tokenizer(self):
+        
         self.tokenizer = AutoTokenizer.from_pretrained(self.model_path)
         precision_dtype_mapping = {"float16": torch.float16, "float32": torch.float32}
 
@@ -110,7 +112,9 @@ class PyTorchBenchmark(BaseBenchmarkClass):
 
     def postprocess(self, output: dict) -> str:
         output_tokens = output["output_tokens"]
-        return self.tokenizer.decode(output_tokens, skip_special_tokens=True)
+        result = self.tokenizer.decode(output_tokens, skip_special_tokens=True)
+        # print(result)
+        return result
 
     def on_exit(self):
         if self.device == "cuda:0":
@@ -125,10 +129,14 @@ if __name__ == "__main__":
         description="HuggingFace Transformers Benchmark (PyTorch backend)"
     )
     args = parser.parse_args()
-    model_path = args.model_name
+    if args.model_name == 'taide':
+        model_path = 'taide/TAIDE-LX-7B-Chat'
+    else:
+        model_path = args.model_name
     precisions_mapping = {
         "cpu": ("float32",),
-        "cuda": ("float32", "float16", "int8", "int4"),
+        # "cuda": ("float32", "float16", "int8", "int4"),
+        "cuda": ("float32", "float16"),
         "metal": ("float32", "float16"),
     }
     runner_dict = {}

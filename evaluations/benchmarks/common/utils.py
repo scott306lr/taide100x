@@ -123,7 +123,7 @@ def make_report(
     # Finally write the quality checks results
     logger.info("Writing the model completion for empirical tests")
     with open(benchmark.answers_json_path, "w") as json_file:
-        json.dump(all_answers, json_file)
+        json.dump(all_answers, json_file, ensure_ascii=False)
 
         logger.info("Benchmarking Fininshed")
     markdown_content = make_markdown(

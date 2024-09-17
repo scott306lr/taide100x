@@ -15,6 +15,10 @@ VENV_DIR="$SCRIPT_DIR/venv"
 
 # Set default folder paths for AWQ weights
 LLAMA2_AWQ_WEIGHTS_FOLDER="$CURRENT_DIR/models/llama-2-7b-chat-autoawq"
+TAIDE7B_AWQ_WEIGHTS_FOLDER="/share2/saves/ting0602/autoawq/TAIDE-LX-7B-Chat-w4-g128-autoawq"
+# TODO: add 8b model
+# TAIDE7B_AWQ_WEIGHTS_FOLDER="/share2/saves/ting0602/autoawq/TAIDE-LX-8B-Chat-Alpha1-w4-g128-autoawq"
+
 MISTRAL_AWQ_WEIGHTS_FOLDER="$CURRENT_DIR/models/mistral-7b-v0.1-instruct-autoawq"
 
 check_python() {
@@ -35,6 +39,9 @@ download_awq_weights() {
     if [ "$MODEL_NAME" = "llama" ]; then
         DOWNLOAD_DIR="$LLAMA2_AWQ_WEIGHTS_FOLDER"
         MODEL_IDENTIFIER="TheBloke/Llama-2-7B-Chat-AWQ"
+    elif [ "$MODEL_NAME" = "taide" ]; then
+        DOWNLOAD_DIR="$TAIDE7B_AWQ_WEIGHTS_FOLDER"
+        MODEL_IDENTIFIER="TAIDE7B_AWQ_WEIGHTS_FOLDER"
     elif [ "$MODEL_NAME" = "mistral" ]; then
         DOWNLOAD_DIR="$MISTRAL_AWQ_WEIGHTS_FOLDER"
         MODEL_IDENTIFIER="TheBloke/Mistral-7B-Instruct-v0.1-AWQ"

@@ -1,0 +1,58 @@
+[
+    {
+        "prompt": "我正在為早餐做煎餅。我在碗裡加入了一杯麵粉、一茶匙鹽和幾湯匙糖，攪拌後加入一杯牛奶、一顆打散的蛋和幾湯匙油，攪拌到剛好混合。然後我放了1/4杯在熱的平底鍋上，等到變成棕色時翻面。但煎餅太糟糕了！為什麼？請列出主要原因。用一句話，盡可能準確回答。",
+        "max_tokens": 120,
+        "temperature": 0.1,
+        "expected": {
+            "taide": "你可能攪拌過度，導致麵糊太稠或麵粉的筋性影響口感。"
+        }
+    },
+    {
+        "prompt": "42隻鳥坐在樹枝上。獵人經過，射死了一隻，卻打偏了兩隻。樹枝上還剩幾隻鳥？用一句話，盡可能準確回答。",
+        "max_tokens": 120,
+        "temperature": 0.1,
+        "expected": {
+            "taide": "所有鳥都會飛走，樹枝上沒有剩下的鳥。"
+        }
+    },
+    {
+        "prompt": "你能在以下句子中找到多少個錯誤？句子：Its to much to loose if your talking about hundred’s of dollars. 用一句話，盡可能準確回答。",
+        "max_tokens": 120,
+        "temperature": 0.1,
+        "expected": {
+            "taide": "句子有五個錯誤：應為’It's too much to lose if you're talking about hundreds of dollars.‘"
+        }
+    },
+    {
+        "prompt": "你是一位農業化學化合物的專家。你的工作是提高對過度使用化學農藥的警覺性，強調對人體長期的負面影響。請直接簡明，避免過於科學的解釋，使用簡單易懂的語言，讓沒有大學學歷的人也能理解。用一句話，盡可能準確回答。",
+        "max_tokens": 120,
+        "temperature": 0.1,
+        "expected": {
+            "taide": "過度使用化學農藥會在人體內累積，長期下來可能導致健康問題如癌症或神經損傷。"
+        }
+    },
+    {
+        "prompt": "在曼哈頓計劃期間，約翰·馮·諾依曼提出了如何最大化炸彈爆炸破壞力的建議。他的想法是什麼？用一句話，盡可能準確回答。",
+        "max_tokens": 120,
+        "temperature": 0.1,
+        "expected": {
+            "taide": "他建議將炸彈在空中引爆，以最大化衝擊波的破壞範圍。"
+        }
+    },
+    {
+        "prompt": "以下提供英文內容，請幫我翻譯成中文。Dongshan coffee is famous for its unique position, and the constant refinement of production methods. The flavor is admired by many caffeine afficionados.",
+        "max_tokens": 120,
+        "temperature": 0.1,
+        "expected": {
+            "taide": "東山咖啡因其獨特的地理位置和不斷改進的生產方法而聞名，其風味受到了許多咖啡愛好者的讚賞。"
+        }
+    },
+    {
+        "prompt": "請幫我縮寫以下內容：根據空軍公布台海周邊空域活動示意圖,1架次卡28反潛直升機、1架次運8技偵機侵擾西南空域。\n國防部發布新聞稿指出,國軍運用任務機、艦及岸置飛彈系統嚴密監控與應處。",
+        "max_tokens": 120,
+        "temperature": 0.1,
+        "expected": {
+            "taide": "空軍公布台海周邊空域活動示意圖顯示，1架卡-28反潛直升機和1架運-8技偵機侵擾西南空域。國防部表示，國軍運用任務機、艦及岸置飛彈系統嚴密監控與應處。"
+        }
+    }
+]

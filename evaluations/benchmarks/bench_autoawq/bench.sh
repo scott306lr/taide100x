@@ -70,7 +70,7 @@ check_python() {
 
 
 setup() {
-    local MODEL_NAME="${1:-llama}"
+    local MODEL_NAME="${1:-taide}"
     echo -e "\nSetting up with $SCRIPT_DIR/setup.sh..."
     bash "$SCRIPT_DIR/setup.sh" "$MODEL_NAME"
 }
@@ -147,6 +147,6 @@ PROMPT="${PROMPT:-"Write an essay about the transformer model architecture"}"
 REPETITIONS="${REPETITIONS:-10}"
 MAX_TOKENS="${MAX_TOKENS:-512}"
 DEVICE="${DEVICE:-'cuda'}"
-MODEL_NAME="${MODEL_NAME:-"llama"}"
+MODEL_NAME="${MODEL_NAME:-"taide"}"
 
 run_benchmarks "$PROMPT" "$REPETITIONS" "$MAX_TOKENS" "$DEVICE" "$MODEL_NAME"

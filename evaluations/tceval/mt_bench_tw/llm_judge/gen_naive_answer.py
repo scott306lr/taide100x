@@ -207,7 +207,6 @@ def get_model_answers(
                 except RuntimeError as e:
                     print("ERROR question ID: ", question["question_id"])
                     output = "ERROR"
-
                 conv.update_last_message(output)
                 turns.append(output)
 
@@ -223,7 +222,7 @@ def get_model_answers(
                 "choices": choices,
                 "tstamp": time.time(),
             }
-            fout.write(json.dumps(ans_json) + "\n")
+            fout.write(json.dumps(ans_json, ensure_ascii=False) + "\n")
 
 
 def reorg_answer_file(answer_file):

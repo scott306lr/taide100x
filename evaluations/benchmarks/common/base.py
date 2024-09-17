@@ -47,6 +47,8 @@ class BaseBenchmarkClass(ABC):
             self.model_type = "llama"
         elif "mistral" in model_name:
             self.model_type = "mistral"
+        elif "taide" in model_name:
+            self.model_type = "taide"
 
         self.model_name = model_name
         self.model_path = model_path
@@ -71,7 +73,13 @@ class BaseBenchmarkClass(ABC):
         )
 
         # Fetch the questions for quality checks
-        self._questions_json_path = os.path.join(self.root_folder, "questions.json")
+        if self.model_type == 'taide':
+            print("Queation: zh")
+            self._questions_json_path = os.path.join(self.root_folder, "questions_tw.json") 
+        else:
+            print("Queation: en")
+            
+            self._questions_json_path = os.path.join(self.root_folder, "questions.json")
         self.answers_json_path = os.path.join(self.log_folder, "quality_check.json")
         self.questions = json.load(open(self._questions_json_path, "r"))
 
@@ -138,6 +146,13 @@ class BaseBenchmarkClass(ABC):
                     {"role": "user", "content": system_content},
                     {"role": "assistant", "content": "Sure, noted."},
                     {"role": "user", "content": prompt},
+                ]
+            elif self.model_type == "taide":
+                system_content = "你的回答應該切中要點、準確且嚴格限制不能超過兩句話"
+                template = [
+                    {"role": "user", "content": system_content},
+                    {"role": "assistant", "content": "Sure, noted."},
+                    {"role": "user", "content": f"<s>[INST] {prompt} [/INST]"},
                 ]
             else:
                 template = [
