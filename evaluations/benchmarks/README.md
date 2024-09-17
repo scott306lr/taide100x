@@ -3,7 +3,7 @@
 Currently, only bench_pytorch (for org EN) is available. The other benchmarks will be added later.
 We will replace the model and tests with the ones for Taiwan LLM models.
 ```bash
-CUDA_VISIBLE_DEVICES=0 bash ./bench_pytorch/bench.sh -d cuda -n meta-llama/Llama-2-7b-chat-hf -r 1
+CUDA_VISIBLE_DEVICES=0 bash ./bench_pytorch/bench.sh -d cuda -n taide/TAIDE-LX-7B-Chat -r 1
 ```
 
 <div align="center">

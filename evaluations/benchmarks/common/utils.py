@@ -122,8 +122,9 @@ def make_report(
                 )
     # Finally write the quality checks results
     logger.info("Writing the model completion for empirical tests")
-    with open(benchmark.answers_json_path, "w") as json_file:
-        json.dump(all_answers, json_file, ensure_ascii=False)
+    with open(benchmark.answers_json_path, "w", encoding='utf8') as json_file:
+        # json.dump(all_answers, json_file)
+        json.dump(all_answers, json_file, indent=4, ensure_ascii=False)
 
         logger.info("Benchmarking Fininshed")
     markdown_content = make_markdown(
@@ -137,7 +138,7 @@ def make_report(
 
 
 def make_markdown(input_json_path: str, is_bench_pytorch: bool = False):
-    with open(input_json_path, "r") as file:
+    with open(input_json_path, "r", encoding='utf-8') as file:
         data = json.load(file)
 
     precisions = list(data.keys())
