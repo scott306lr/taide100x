@@ -6,7 +6,6 @@ import torch
 from awq import AutoAWQForCausalLM
 from transformers import AutoTokenizer
 
-# FIXME: There's a bug that cannot find the correct path
 sys.path.append(os.getcwd())
 from common.base import BaseBenchmarkClass  # noqa
 from common.utils import launch_cli, make_report  # noqa
