@@ -81,10 +81,10 @@ class BaseBenchmarkClass(ABC):
 
         # Fetch the questions for quality checks
         if self.model_type == 'taide':
-            print("Queation: zh")
+            print("Question: zh")
             self._questions_json_path = os.path.join(self.root_folder, "questions_tw.json") 
         else:
-            print("Queation: en")
+            print("Question: en")
             
             self._questions_json_path = os.path.join(self.root_folder, "questions.json")
         self.answers_json_path = os.path.join(self.log_folder, "quality_check.json")
