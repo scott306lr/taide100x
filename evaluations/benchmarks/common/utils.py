@@ -62,7 +62,18 @@ def launch_cli(description: str):
         type=float,
         help="Temperature to use.",
     )
-
+    parser.add_argument(
+        "--batch_size",
+        type=int,
+        default=1,
+        help="Batch size for the benchmark (default: 1).",
+    )
+    parser.add_argument(
+        "--prefill_seq_len",
+        type=int,
+        default=128,
+        help="Prefill sequence length for the benchmark (default: 128).",
+    )
     return parser
 
 
@@ -92,6 +103,8 @@ def make_report(
             max_tokens=args.max_tokens,
             repetitions=args.repetitions,
             temperature=args.temperature,
+            batch_size=args.batch_size,
+            prefill_seq_len=args.prefill_seq_len
         )
 
         # Make report for benchmarks
@@ -100,8 +113,8 @@ def make_report(
         report[f"{args.model_name}-{benchmark_name} (token/sec)"][precision] = {
             "mean": np.mean(benchmark.tps_results),
             "std": np.std(benchmark.tps_results),
+            "median": np.median(benchmark.tps_results),
         }
-
         report[f"{args.model_name}-{benchmark_name} (memory usage)"][precision] = {
             "usage": max(benchmark.memory_usage_results)
         }
@@ -111,14 +124,18 @@ def make_report(
         all_answers[precision] = benchmark.answers
 
     # Make the final report
-
+    logger.info(f"=> Batch size: {args.batch_size}")
+    logger.info(f"=> Prefill sequence length: {args.prefill_seq_len}")
     for framework, quantizations in report.items():
         for quantization, stats in quantizations.items():
             if framework == f"{args.model_name}-{benchmark_name} (memory usage)":
                 logger.info(f"{framework}, {quantization}: {stats['usage']} MB")
             else:
                 logger.info(
-                    f"{framework}, {quantization}: {stats['mean']:.2f} ± {stats['std']:.2f}"
+                    f"{framework}, {quantization} (mean): {stats['mean']:.2f} ± {stats['std']:.2f}"
+                )
+                logger.info(
+                    f"{framework}, {quantization} (median): {stats['median']:.2f}"
                 )
     # Finally write the quality checks results
     logger.info("Writing the model completion for empirical tests")
