@@ -93,6 +93,7 @@ class PyTorchBenchmark(BaseBenchmarkClass):
     def run_model(self, inputs: dict, max_tokens: int, temperature: float) -> dict:
         tensor = inputs["tensor"]
         num_input_tokens = inputs["num_input_tokens"]
+        attention_mask = inputs.get("attention_mask", None)
 
         output = (
             self.model.generate(
@@ -100,6 +101,8 @@ class PyTorchBenchmark(BaseBenchmarkClass):
                 max_new_tokens=max_tokens,
                 temperature=temperature,
                 do_sample=True,
+                attention_mask=attention_mask,
+                pad_token_id=self.tokenizer.pad_token_id,
             )
             .detach()
             .tolist()[0]
@@ -117,7 +120,7 @@ class PyTorchBenchmark(BaseBenchmarkClass):
         return result
 
     def on_exit(self):
-        if self.device == "cuda:0":
+        if "cuda" in self.device:
             del self.model
             torch.cuda.synchronize()
         else:
@@ -129,7 +132,12 @@ if __name__ == "__main__":
         description="HuggingFace Transformers Benchmark (PyTorch backend)"
     )
     args = parser.parse_args()
-    model_path = args.model_name
+    if args.model_name == 'taide7b':
+        model_path = 'taide/TAIDE-LX-7B-Chat'
+    elif args.model_name == 'taide8b':
+        model_path = 'taide/Llama3-TAIDE-LX-8B-Chat-Alpha1'
+    else:
+        model_path = args.model_name
     precisions_mapping = {
         "cpu": ("float32",),
         # "cuda": ("float32", "float16", "int8", "int4"),

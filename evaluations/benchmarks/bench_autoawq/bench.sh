@@ -23,10 +23,10 @@ print_usage() {
     echo "  -p, --prompt        Prompt for benchmarks (default: 'Write an essay about the transformer model architecture')"
     echo "  -r, --repetitions   Number of repetitions for benchmarks (default: 10)"
     echo "  -m, --max_tokens    Maximum number of tokens for benchmarks (default: 512)"
-    echo "  -d, --device        Device for benchmarks (possible values: 'metal', 'cuda', and 'cpu', default: 'cuda')"
-    echo "  -n, --model_name    The name of the model to benchmark (possible values: 'llama' for using Llama2, 'mistral' for using Mistral 7B v0.1)"
-    echo "  -lf, --log_file     Logging file name."
-    echo "  -h, --help          Show this help message"
+    echo "  -n, --model_name        The name of the model to benchmark (possible values: 'llama' for using Llama2, 'mistral' for using Mistral 7B v0.1)"
+    echo "  -b, --batch_size        Batch size for benchmarks (default: 1)"
+    echo "  -psl, --prefill_seq_len Prefill sequence length for benchmarks (default: 50)"
+    echo "  -h, --help              Show this help message"
     exit 1
 }
 
@@ -70,7 +70,7 @@ check_python() {
 
 
 setup() {
-    local MODEL_NAME="${1:-llama}"
+    local MODEL_NAME="${1:-taide}"
     echo -e "\nSetting up with $SCRIPT_DIR/setup.sh..."
     bash "$SCRIPT_DIR/setup.sh" "$MODEL_NAME"
 }
@@ -81,6 +81,8 @@ run_benchmarks() {
     local MAX_TOKENS="$3"
     local DEVICE="$4"
     local MODEL_NAME="$5"
+    local BATCH_SIZE="$6"
+    local PREFILL_SEQ_LEN="$7"
 
     # shellcheck disable=SC1091
     source "$SCRIPT_DIR/venv/bin/activate"
@@ -89,7 +91,9 @@ run_benchmarks() {
         --repetitions "$REPETITIONS" \
         --max_tokens "$MAX_TOKENS" \
         --model_name "$MODEL_NAME" \
-        --device "$DEVICE"
+        --device "$DEVICE" \
+        --batch_size "$BATCH_SIZE" \
+        --prefill_seq_len "$PREFILL_SEQ_LEN"
 }
 
 while [ "$#" -gt 0 ]; do
@@ -128,6 +132,14 @@ while [ "$#" -gt 0 ]; do
             MODEL_NAME="$2"
             shift 2
             ;;
+        -b|--batch_size)
+            BATCH_SIZE="$2"
+            shift 2
+            ;;
+        -psl|--prefill_seq_len)
+            PREFILL_SEQ_LEN="$2"
+            shift 2
+            ;;
         -h|--help)
             print_usage
             ;;
@@ -147,6 +159,8 @@ PROMPT="${PROMPT:-"Write an essay about the transformer model architecture"}"
 REPETITIONS="${REPETITIONS:-10}"
 MAX_TOKENS="${MAX_TOKENS:-512}"
 DEVICE="${DEVICE:-'cuda'}"
-MODEL_NAME="${MODEL_NAME:-"llama"}"
+MODEL_NAME="${MODEL_NAME:-"taide"}"
+BATCH_SIZE="${BATCH_SIZE:-1}"
+PREFILL_SEQ_LEN="${PREFILL_SEQ_LEN:-128}"
 
-run_benchmarks "$PROMPT" "$REPETITIONS" "$MAX_TOKENS" "$DEVICE" "$MODEL_NAME"
+run_benchmarks "$PROMPT" "$REPETITIONS" "$MAX_TOKENS" "$DEVICE" "$MODEL_NAME" "$BATCH_SIZE" "$PREFILL_SEQ_LEN"

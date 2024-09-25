@@ -54,6 +54,8 @@ class BaseBenchmarkClass(ABC):
             self.model_type = "llama"
         elif "mistral" in lower_model_name:
             self.model_type = "mistral"
+        elif "taide" in model_name:
+            self.model_type = "taide"
 
         self.model_name = model_name
         self.model_path = model_path
@@ -78,7 +80,13 @@ class BaseBenchmarkClass(ABC):
         )
 
         # Fetch the questions for quality checks
-        self._questions_json_path = os.path.join(self.root_folder, "questions_tw.json")
+        if self.model_type == 'taide':
+            print("Question: zh")
+            self._questions_json_path = os.path.join(self.root_folder, "questions_tw.json") 
+        else:
+            print("Question: en")
+            
+            self._questions_json_path = os.path.join(self.root_folder, "questions.json")
         self.answers_json_path = os.path.join(self.log_folder, "quality_check.json")
         self.questions = json.load(open(self._questions_json_path, "r"))
 
@@ -140,12 +148,19 @@ class BaseBenchmarkClass(ABC):
     ):
         if not for_benchmarks:
             # system_content = "You answers should always be to the point, precise and not more than 2 sentences strictly"
-            system_content = "你是一個只會說台灣繁體中文的AI助理。"
+            # system_content = "你是一個只會說台灣繁體中文的AI助理。"
             if self.model_type == "mistral":
                 template = [
                     {"role": "user", "content": system_content},
                     {"role": "assistant", "content": "Sure, noted."},
                     {"role": "user", "content": prompt},
+                ]
+            elif self.model_type == "taide":
+                system_content = "你是一個台灣繁體中文的AI助理，你的回答應該切中要點、準確"
+                template = [
+                    {"role": "user", "content": system_content},
+                    {"role": "assistant", "content": "Sure, noted."},
+                    {"role": "user", "content": f"<s>[INST] {prompt} [/INST]"},
                 ]
             else:
                 template = [
@@ -156,16 +171,15 @@ class BaseBenchmarkClass(ABC):
         else:
             return [{"role": "user", "content": prompt}]
 
-    def _benchmark_cuda(self, prompt: str, max_tokens: int, temperature: float):
+    def _benchmark_cuda(self, prompt: str, max_tokens: int, temperature: float, batch_size: int, prefill_seq_len: int):
         import torch
 
         start_event = torch.cuda.Event(enable_timing=True)
         end_event = torch.cuda.Event(enable_timing=True)
-
-        inputs = self.preprocess(prompt=prompt, for_benchmarks=True)
-
+        dummy_tensor = torch.randint(100, 200, (batch_size, prefill_seq_len), dtype=torch.int32, device=self.device)
+        inputs = {"tensor": dummy_tensor, "num_input_tokens": prefill_seq_len}
+    
         temperature = 0.1 if temperature is None else temperature
-
         with self.memory_tracker.track():
             torch.cuda.synchronize()
 
@@ -186,7 +200,7 @@ class BaseBenchmarkClass(ABC):
         return (token_per_sec, gpu_mem_consumed)
 
     def benchmark(
-        self, prompt: str, max_tokens: int, repetitions: int, temperature: float = 0.1
+        self, prompt: str, max_tokens: int, repetitions: int, batch_size: int, prefill_seq_len: int, temperature: float = 0.1, 
     ) -> None:
         for i in range(repetitions):
             self.logger.info(
@@ -195,7 +209,7 @@ class BaseBenchmarkClass(ABC):
 
             if self.device == "cuda":
                 tok_per_sec, gpu_memory_consumed = self._benchmark_cuda(
-                    prompt=prompt, max_tokens=max_tokens, temperature=temperature
+                    prompt=prompt, max_tokens=max_tokens, temperature=temperature, batch_size=batch_size, prefill_seq_len=prefill_seq_len
                 )
                 self.tps_results.append(tok_per_sec)
                 self.memory_usage_results.append(gpu_memory_consumed)
