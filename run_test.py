@@ -1,11 +1,13 @@
 import torch
 from transformers import AutoTokenizer, AutoModelForCausalLM
+
 import argparse
 import time
 import os
 import logging
 
-from models import NaiveWrapper, HuggingFaceWrapper
+from models import NaiveWrapper, HuggingFaceWrapper, FlashInferWrapper
+from models.llm.modeling_llama_fi import LlamaForCausalLM
 
 
 def load_model(
@@ -18,17 +20,28 @@ def load_model(
     tokenizer = AutoTokenizer.from_pretrained(llm_path, use_fast=False)
     
     # load LLM
-    llm = AutoModelForCausalLM.from_pretrained(
-        args.llm_path, 
-        torch_dtype=dtype,
-        low_cpu_mem_usage=True,
-        device_map=device
-    )
+    if mode == "flashinfer":
+        llm = LlamaForCausalLM.from_pretrained(
+            args.llm_path, 
+            torch_dtype=dtype,
+            low_cpu_mem_usage=True,
+            device_map=device,
+        )
+    else :
+        llm = AutoModelForCausalLM.from_pretrained(
+            args.llm_path, 
+            torch_dtype=dtype,
+            low_cpu_mem_usage=True,
+            device_map=device,
+        )
+        
 
     if mode == "naive":
         model = NaiveWrapper()
     elif mode == "huggingface" or mode == "hf":
         model = HuggingFaceWrapper()
+    elif mode == "flashinfer":
+        model = FlashInferWrapper()
     else:
         raise ValueError("Invalid mode.")
     
