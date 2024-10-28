@@ -36,19 +36,19 @@ from transformers import LlamaConfig
 
 
 # [MODIFIED] flashinfer
-from .utils.attention_wrapper import (
+from .utils.flashinfer.attention_wrapper import (
     POS_ENCODING_MODE,
     FlashinferAttentionWrapper,
     AttentionRotaryParams,
 
 )
 
-from .utils.cache_manager import (
+from .utils.flashinfer.cache_manager import (
     KvCachePool,
     KvCacheBatchPosition,
 )
 
-from .utils.rotary import (
+from .utils.flashinfer.rotary import (
     rotate_query_key_in_place,
     getPositionIdsAndMaxSeqLenForPrefill,
     getPositionIdsAndMaxSeqLenForDecode,

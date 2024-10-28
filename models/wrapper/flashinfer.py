@@ -5,7 +5,7 @@ from .base import WrapperBase
 from transformers.generation.logits_process import LogitsWarper
 from transformers.generation.stopping_criteria import StoppingCriteria
 
-from ..llm.utils.cache_manager import (
+from ..llm.utils.flashinfer.cache_manager import (
     KvCachePool,
     KvCacheBatchPosition,
     RequestKvCache,
